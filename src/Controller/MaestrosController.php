@@ -11,8 +11,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api')]
 class MaestrosController extends AbstractController
 {
-    // 1. GET Tipos de Receta (Para el desplegable de crear receta)
-    #[Route('/tipos-receta', name: 'get_tipos_receta', methods: ['GET'])]
+    // 1. GET Tipos de Receta
+    #[Route('/recipe-types', name: 'get_recipe_types', methods: ['GET'])]
     public function getTiposReceta(TipoRecetaRepository $repo): JsonResponse
     {
         $tipos = $repo->findAll();
@@ -29,8 +29,8 @@ class MaestrosController extends AbstractController
         return $this->json($data);
     }
 
-    // 2. GET Tipos de Nutriente (Para añadir valores nutricionales)
-    #[Route('/tipos-nutriente', name: 'get_tipos_nutriente', methods: ['GET'])]
+    // 2. GET Tipos de Nutriente
+    #[Route('/nutrient-types', name: 'get_nutrient_types', methods: ['GET'])]
     public function getTiposNutriente(TipoNutrienteRepository $repo): JsonResponse
     {
         $nutrientes = $repo->findAll();

@@ -49,11 +49,18 @@ class Receta
     #[ORM\OneToMany(targetEntity: RecetaNutriente::class, mappedBy: 'receta', orphanRemoval: true)]
     private Collection $recetaNutrientes;
 
+    /**
+     * @var Collection<int, Valoracion>
+     */
+    #[ORM\OneToMany(targetEntity: Valoracion::class, mappedBy: 'receta', orphanRemoval: true)]
+    private Collection $valoraciones;
+
     public function __construct()
     {
         $this->ingredientes = new ArrayCollection();
         $this->pasos = new ArrayCollection();
         $this->recetaNutrientes = new ArrayCollection();
+        $this->valoraciones = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -209,5 +216,49 @@ class Receta
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Valoracion>
+     */
+    public function getValoraciones(): Collection
+    {
+        return $this->valoraciones;
+    }
+
+    public function addValoracion(Valoracion $valoracion): static
+    {
+        if (!$this->valoraciones->contains($valoracion)) {
+            $this->valoraciones->add($valoracion);
+            $valoracion->setReceta($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValoracion(Valoracion $valoracion): static
+    {
+        if ($this->valoraciones->removeElement($valoracion)) {
+            // set the owning side to null (unless already changed)
+            if ($valoracion->getReceta() === $this) {
+                $valoracion->setReceta(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPromedioVotos(): float
+    {
+        if ($this->valoraciones->isEmpty()) {
+            return 0.0;
+        }
+
+        $suma = 0;
+        foreach ($this->valoraciones as $v) {
+            $suma += $v->getPuntuacion();
+        }
+
+        return round($suma / $this->valoraciones->count(), 1);
     }
 }
